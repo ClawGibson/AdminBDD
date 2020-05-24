@@ -5,14 +5,12 @@
  */
 package Clases;
 
-import static Clases.Mantenimiento.res;
 import conexiones.Conexion;
 import java.awt.HeadlessException;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.CallableStatement;
 import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -22,7 +20,6 @@ import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 import java.sql.ResultSet;
-import java.util.Vector;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
@@ -110,28 +107,6 @@ public class Ventas extends javax.swing.JFrame {
         }
     }
 
-    public void Cargar2() {
-        DefaultTableCellRenderer alinearCentro = new DefaultTableCellRenderer();
-        alinearCentro.setHorizontalAlignment(SwingConstants.CENTER);
-        DefaultTableModel modelo = new DefaultTableModel();
-        modelo.addColumn("Id Venta");
-        modelo.addColumn("id Art");
-        modelo.addColumn("Artículo");
-        modelo.addColumn("Cant");
-        modelo.addColumn("Precio");
-        tabla.setModel(modelo);
-        int cont = 0;
-        while (cont < 29) {
-            Object vector[] = new Object[5];
-            for (int i = 0; i < vector.length; i++) {
-                vector[i] = "";
-                tabla.getColumnModel().getColumn(i).setCellRenderer(alinearCentro);
-            }
-            modelo.addRow(vector);
-        }
-        conexiones.cierraConexion();
-    }
-
     class horas implements ActionListener {
 
         public void actionPerformed(ActionEvent e) {
@@ -161,8 +136,8 @@ public class Ventas extends javax.swing.JFrame {
         sub = new javax.swing.JTextField();
         iva = new javax.swing.JTextField();
         total = new javax.swing.JTextField();
-        agregar = new javax.swing.JButton();
         finalizar = new javax.swing.JButton();
+        agregar = new javax.swing.JButton();
         eliminar = new javax.swing.JButton();
         nueva = new javax.swing.JButton();
         logo = new javax.swing.JLabel();
@@ -184,7 +159,7 @@ public class Ventas extends javax.swing.JFrame {
         titulo.setFont(new java.awt.Font("Modern No. 20", 0, 20)); // NOI18N
         titulo.setText("MÓDULO VENTAS");
 
-        jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder("Articulos"));
+        jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder("Carrito de venta"));
 
         tabla.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -243,6 +218,14 @@ public class Ventas extends javax.swing.JFrame {
 
         total.setEditable(false);
 
+        finalizar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/recursos/iconfinder_button_ok_3207 (2).png"))); // NOI18N
+        finalizar.setText("Finalizar");
+        finalizar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                finalizarActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -262,7 +245,8 @@ public class Ventas extends javax.swing.JFrame {
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(iva)
                             .addComponent(total))))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(59, Short.MAX_VALUE))
+            .addComponent(finalizar, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -271,15 +255,17 @@ public class Ventas extends javax.swing.JFrame {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel3)
                     .addComponent(sub, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(31, 31, 31)
+                .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel4)
                     .addComponent(iva, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(35, 35, 35)
+                .addGap(24, 24, 24)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel5)
                     .addComponent(total, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(49, 49, 49))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(finalizar)
+                .addGap(48, 48, 48))
         );
 
         agregar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/recursos/iconfinder_Plus__Orange_34237.png"))); // NOI18N
@@ -287,14 +273,6 @@ public class Ventas extends javax.swing.JFrame {
         agregar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 agregarActionPerformed(evt);
-            }
-        });
-
-        finalizar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/recursos/iconfinder_button_ok_3207 (2).png"))); // NOI18N
-        finalizar.setText("Finalizar");
-        finalizar.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                finalizarActionPerformed(evt);
             }
         });
 
@@ -323,9 +301,7 @@ public class Ventas extends javax.swing.JFrame {
                 .addGap(34, 34, 34)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(finalizar, javax.swing.GroupLayout.PREFERRED_SIZE, 121, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(eliminar, javax.swing.GroupLayout.PREFERRED_SIZE, 129, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(eliminar, javax.swing.GroupLayout.PREFERRED_SIZE, 129, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(32, 32, 32)
                         .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(jPanel2Layout.createSequentialGroup()
@@ -348,9 +324,7 @@ public class Ventas extends javax.swing.JFrame {
                         .addComponent(agregar)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(eliminar)
-                        .addGap(78, 78, 78)
-                        .addComponent(finalizar)
-                        .addGap(14, 14, 14)))
+                        .addGap(117, 117, 117)))
                 .addGap(0, 11, Short.MAX_VALUE))
         );
 
@@ -388,11 +362,6 @@ public class Ventas extends javax.swing.JFrame {
         });
 
         articulo.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Articulos" }));
-        articulo.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mousePressed(java.awt.event.MouseEvent evt) {
-                articuloMousePressed(evt);
-            }
-        });
 
         buscador.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
@@ -443,15 +412,12 @@ public class Ventas extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(registro, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
-                        .addComponent(menu, javax.swing.GroupLayout.PREFERRED_SIZE, 153, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 49, Short.MAX_VALUE)))
-                .addContainerGap())
+                        .addComponent(menu, javax.swing.GroupLayout.PREFERRED_SIZE, 153, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -486,6 +452,8 @@ public class Ventas extends javax.swing.JFrame {
                     .addComponent(registro))
                 .addGap(22, 22, 22))
         );
+
+        jPanel2.getAccessibleContext().setAccessibleName("Carrito de venta");
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -551,6 +519,7 @@ public class Ventas extends javax.swing.JFrame {
             }
         }
         conexiones.cierraConexion();
+        eliminar.setEnabled(false);
     }//GEN-LAST:event_eliminarActionPerformed
 
     private void registroActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_registroActionPerformed
@@ -568,14 +537,6 @@ public class Ventas extends javax.swing.JFrame {
             articulo.showPopup();
         }
     }//GEN-LAST:event_buscadorKeyReleased
-
-    private void articuloMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_articuloMousePressed
-        if (articulo.getSelectedIndex() != 0) {
-
-        } else {
-            limpiar();
-        }
-    }//GEN-LAST:event_articuloMousePressed
 
     private void nuevaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nuevaActionPerformed
         try {
@@ -637,6 +598,7 @@ public class Ventas extends javax.swing.JFrame {
     }//GEN-LAST:event_finalizarActionPerformed
 
     private void tablaMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tablaMousePressed
+        eliminar.setEnabled(true);
         int fila = tabla.rowAtPoint(evt.getPoint());
         int columna = tabla.columnAtPoint(evt.getPoint());
         try {
@@ -656,7 +618,7 @@ public class Ventas extends javax.swing.JFrame {
 
     private void calcularTotales() {
         int filas = tabla.getRowCount();
-        float subtotal = 0;
+        float subtotal = 0f;
         for (int i = 0; i <= filas; i++) {
             subtotal = subtotal + (Float.parseFloat(tabla.getValueAt(i, 4).toString()) * Float.parseFloat(tabla.getValueAt(i, 3).toString()));
             filas--;
@@ -666,7 +628,7 @@ public class Ventas extends javax.swing.JFrame {
         total.setText(Float.parseFloat(sub.getText()) + Float.parseFloat(iva.getText()) + "");
     }
 
-    public void todosArticulos() {
+    private void todosArticulos() {
         try {
             ArrayList<String> arr = new ArrayList();
             arr = obtenerTodosArticulos();
@@ -682,7 +644,7 @@ public class Ventas extends javax.swing.JFrame {
         }
     }
 
-    public ArrayList<String> obtenerTodosArticulos() throws SQLException {
+    private ArrayList<String> obtenerTodosArticulos() throws SQLException {
         Statement sql = conexiones.Conexion().createStatement();
         ArrayList<String> arr = new ArrayList<String>();
         ResultSet resultado = sql.executeQuery("SELECT * FROM VerTodosArticulos");
@@ -693,7 +655,7 @@ public class Ventas extends javax.swing.JFrame {
         return arr;
     }
 
-    public void ventaArticulos(String cadena) {
+    private void ventaArticulos(String cadena) {
         try {
             ArrayList<String> arr = new ArrayList();
             arr = ventaArticulosDB(cadena);
@@ -709,11 +671,11 @@ public class Ventas extends javax.swing.JFrame {
         }
     }
 
-    public ArrayList<String> ventaArticulosDB(String cadena) throws SQLException {
+    private ArrayList<String> ventaArticulosDB(String cadena) throws SQLException {
         ArrayList<String> arr = new ArrayList<String>();
         conn = conexiones.Conexion();
         CallableStatement proc = conn.prepareCall("{call VentaArticulos(?)}");
-        proc.setString(1, buscador.getText());
+        proc.setString(1, cadena);
         res = proc.executeQuery();
         while (res.next()) {
             arr.add(res.getString("nombre"));
