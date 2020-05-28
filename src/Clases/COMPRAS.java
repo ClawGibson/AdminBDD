@@ -125,7 +125,6 @@ public class COMPRAS extends javax.swing.JFrame {
     private void initComponents() {
 
         comprasEtq = new javax.swing.JLabel();
-        fecha = new javax.swing.JLabel();
         hora = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
@@ -371,9 +370,7 @@ public class COMPRAS extends javax.swing.JFrame {
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
                                 .addGap(79, 79, 79)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(hora, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(fecha, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addComponent(hora, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                                 .addComponent(comprasEtq, javax.swing.GroupLayout.PREFERRED_SIZE, 434, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -439,7 +436,6 @@ public class COMPRAS extends javax.swing.JFrame {
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addComponent(horaEtq))
                             .addGroup(layout.createSequentialGroup()
-                                .addComponent(fecha)
                                 .addGap(12, 12, 12)
                                 .addComponent(hor)))
                         .addGap(2, 2, 2)
@@ -544,7 +540,7 @@ public class COMPRAS extends javax.swing.JFrame {
         try {
             conn = conexiones.Conexion();
             CallableStatement proc = conn.prepareCall("{call NuevaCompra(?)}");
-            proc.setString(1, fecha.getText());
+            proc.setString(1, fech.getText());
             int filasAfectadas = proc.executeUpdate();
             if (filasAfectadas != 0) {
                 nueva.setEnabled(false);
@@ -748,7 +744,6 @@ public class COMPRAS extends javax.swing.JFrame {
     private javax.swing.JLabel comprasEtq;
     private javax.swing.JButton eliminar;
     private javax.swing.JLabel fech;
-    private javax.swing.JLabel fecha;
     private javax.swing.JLabel fechaEtq;
     private javax.swing.JButton finalizar;
     private javax.swing.JLabel hor;

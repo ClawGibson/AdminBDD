@@ -5,13 +5,18 @@
  */
 package Clases;
 
+import conexiones.Conexion;
 import java.awt.Dimension;
-import java.sql.PreparedStatement;
+import java.sql.CallableStatement;
+import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Vector;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.JOptionPane;
+import javax.swing.SwingConstants;
+import javax.swing.table.DefaultTableCellRenderer;
 
 /**
  *
@@ -19,8 +24,9 @@ import javax.swing.JOptionPane;
  */
 public class InfoRegistro extends javax.swing.JFrame {
 
-    static ResultSet res;
-    int cont;
+    ResultSet res;
+    Connection conn;
+    Conexion conexiones = new Conexion();
 
     /**
      * Creates new form InfoRegistro
@@ -29,23 +35,42 @@ public class InfoRegistro extends javax.swing.JFrame {
         initComponents();
         setLocationRelativeTo(null);
         this.setMinimumSize(new Dimension(800, 600));
+        Cargar();
     }
 
     public void Cargar() {
-        DefaultTableModel modelo = (DefaultTableModel) tabla.getModel();
-        modelo.setRowCount(0);
-        res = conexiones.conexion.Consulta("SELECT * FROM Ventas");
+        DefaultTableCellRenderer alinearCentro = new DefaultTableCellRenderer();
+        alinearCentro.setHorizontalAlignment(SwingConstants.CENTER);
+        DefaultTableModel modelo = new DefaultTableModel();
+        modelo.addColumn("Id Venta");
+        modelo.addColumn("id Art");
+        modelo.addColumn("Artículo");
+        modelo.addColumn("Cant");
+        modelo.addColumn("Precio");
+        modelo.addColumn("Total");
+        modelo.addColumn("Fecha");
+        tabla.setModel(modelo);
         try {
+            conn = conexiones.Conexion();
+            Statement sql = conexiones.Conexion().createStatement();
+            ResultSet res = sql.executeQuery("SELECT * FROM InfoVentas");
             while (res.next()) {
-                Vector v = new Vector();
-                v.add(res.getInt(1));
-                v.add(res.getInt(2));
-                v.add(res.getInt(3));
-                modelo.addRow(v);
-                tabla.setModel(modelo);
+                Object vector[] = new Object[7];
+                for (int i = 0; i < vector.length; i++) {
+                    vector[i] = res.getObject(i + 1);
+                    tabla.getColumnModel().getColumn(i).setCellRenderer(alinearCentro);
+                }
+                modelo.addRow(vector);
             }
+            conexiones.cierraConexion();
         } catch (SQLException e) {
-
+            System.out.println("Error SQL: ");
+            e.printStackTrace(System.out);
+            conexiones.cierraConexion();
+        } catch (Exception e) {
+            System.out.println("Error Genérico: ");
+            e.printStackTrace(System.out);
+            conexiones.cierraConexion();
         }
     }
 
@@ -58,17 +83,10 @@ public class InfoRegistro extends javax.swing.JFrame {
 
         jScrollPane1 = new javax.swing.JScrollPane();
         tabla = new javax.swing.JTable();
-        eliminar = new javax.swing.JButton();
-        modificar = new javax.swing.JButton();
-        consultar = new javax.swing.JButton();
         regresar = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
-        jLabel2 = new javax.swing.JLabel();
-        jLabel3 = new javax.swing.JLabel();
-        jLabel4 = new javax.swing.JLabel();
-        id = new javax.swing.JTextField();
-        articulo = new javax.swing.JTextField();
-        cantidad = new javax.swing.JTextField();
+        buscador = new javax.swing.JTextField();
+        buscar = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -108,30 +126,6 @@ public class InfoRegistro extends javax.swing.JFrame {
         ));
         jScrollPane1.setViewportView(tabla);
 
-        eliminar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/recursos/iconfinder_Line_ui_icons_Svg-03_1465842.png"))); // NOI18N
-        eliminar.setText("Eliminar");
-        eliminar.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                eliminarActionPerformed(evt);
-            }
-        });
-
-        modificar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/recursos/iconfinder_pencil_285638.png"))); // NOI18N
-        modificar.setText("Modificar");
-        modificar.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                modificarActionPerformed(evt);
-            }
-        });
-
-        consultar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/recursos/iconfinder_search_285651.png"))); // NOI18N
-        consultar.setText("Consultar");
-        consultar.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                consultarActionPerformed(evt);
-            }
-        });
-
         regresar.setText("Regresar");
         regresar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -142,16 +136,14 @@ public class InfoRegistro extends javax.swing.JFrame {
         jLabel1.setFont(new java.awt.Font("Tahoma", 0, 24)); // NOI18N
         jLabel1.setText("Registro de Ventas");
 
-        jLabel2.setFont(new java.awt.Font("Tahoma", 0, 21)); // NOI18N
-        jLabel2.setText("ID");
+        buscador.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                buscadorKeyReleased(evt);
+            }
+        });
 
-        jLabel3.setFont(new java.awt.Font("Tahoma", 0, 21)); // NOI18N
-        jLabel3.setText("Articulo");
-
-        jLabel4.setFont(new java.awt.Font("Tahoma", 0, 21)); // NOI18N
-        jLabel4.setText("Cantidad");
-
-        id.setEditable(false);
+        buscar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/recursos/iconfinder_search_285651.png"))); // NOI18N
+        buscar.setText("Buscar");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -163,57 +155,35 @@ public class InfoRegistro extends javax.swing.JFrame {
                         .addContainerGap()
                         .addComponent(jScrollPane1))
                     .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(481, 481, 481)
-                                .addComponent(jLabel1))
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(26, 26, 26)
-                                .addComponent(jLabel2)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(id, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(242, 242, 242)
-                                .addComponent(jLabel3)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(articulo, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(205, 205, 205)
-                                .addComponent(jLabel4)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(cantidad, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addGap(0, 196, Short.MAX_VALUE)))
+                        .addGap(481, 481, 481)
+                        .addComponent(jLabel1)
+                        .addGap(0, 343, Short.MAX_VALUE)))
                 .addContainerGap())
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addComponent(eliminar, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(modificar, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(consultar, javax.swing.GroupLayout.PREFERRED_SIZE, 118, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(0, 0, Short.MAX_VALUE)
                 .addComponent(regresar, javax.swing.GroupLayout.PREFERRED_SIZE, 122, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(28, 28, 28))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addGap(0, 0, Short.MAX_VALUE)
+                .addComponent(buscador, javax.swing.GroupLayout.PREFERRED_SIZE, 204, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(36, 36, 36)
+                .addComponent(buscar)
+                .addGap(336, 336, 336))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jLabel1)
-                .addGap(110, 110, 110)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel2)
-                    .addComponent(jLabel3)
-                    .addComponent(jLabel4)
-                    .addComponent(id, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(articulo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(cantidad, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(27, 27, 27)
+                .addGap(50, 50, 50)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(buscador, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(buscar))
+                .addGap(89, 89, 89)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 378, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(eliminar)
-                    .addComponent(modificar)
-                    .addComponent(consultar)
-                    .addComponent(regresar))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(regresar)
+                .addContainerGap(13, Short.MAX_VALUE))
         );
 
         pack();
@@ -225,38 +195,46 @@ public class InfoRegistro extends javax.swing.JFrame {
         dispose();
     }//GEN-LAST:event_regresarActionPerformed
 
-    private void eliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_eliminarActionPerformed
-        int row = tabla.getSelectedRow();
-        int opc = JOptionPane.showConfirmDialog(this, "Ã‚Â¿ESTAS SEGURO QUE DESEA ELIMINAR ESTE REGISTRO?", "Pregunta", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
-        if (opc == JOptionPane.YES_OPTION) {
-            try {
-                procedimiento.EliminarVentas(Integer.parseInt(tabla.getValueAt(row, 0).toString()));
-                Cargar();
-            } catch (SQLException e) {
-            }
-        }
-    }//GEN-LAST:event_eliminarActionPerformed
-
-    private void modificarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_modificarActionPerformed
-        try {
-            PreparedStatement pps = conexiones.conexion.getConexion().prepareStatement("update Ventas set idVenta='"
-                    + articulo.getText() + "', cantidad='" + cantidad.getText()
-                    + "' where idVenta='" + id.getText() + "'");
-            pps.executeUpdate();
-            JOptionPane.showMessageDialog(null, "LOS DATOS HAN SIDO MODIFICADOS");
-            id.setText("");
-            articulo.setText("");
-            cantidad.setText("");
-            articulo.requestFocus();
-            cantidad.requestFocus();
+    private void buscadorKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_buscadorKeyReleased
+        if (buscador.getText().equals("")) {
             Cargar();
-        } catch (SQLException e) {
+        } else {
+            buscando(buscador.getText());
         }
-    }//GEN-LAST:event_modificarActionPerformed
+    }//GEN-LAST:event_buscadorKeyReleased
 
-    private void consultarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_consultarActionPerformed
-        Cargar();
-    }//GEN-LAST:event_consultarActionPerformed
+    private void buscando(String busqueda) {
+        DefaultTableCellRenderer alinearCentro = new DefaultTableCellRenderer();
+        alinearCentro.setHorizontalAlignment(SwingConstants.CENTER);
+        DefaultTableModel modelo = new DefaultTableModel();
+        modelo.addColumn("Id Venta");
+        modelo.addColumn("id Art");
+        modelo.addColumn("Artículo");
+        modelo.addColumn("Cant");
+        modelo.addColumn("Precio");
+        modelo.addColumn("Total");
+        modelo.addColumn("Fecha");
+        tabla.setModel(modelo);
+        try {
+            conn = conexiones.Conexion();
+            CallableStatement proc = conn.prepareCall("{call VerInfoVentas(?)}");
+            proc.setString(1, busqueda);
+            res = proc.executeQuery();
+            while (res.next()) {
+                Object vector[] = new Object[7];
+                for (int i = 0; i < vector.length; i++) {
+                    vector[i] = res.getObject(i + 1);
+                    tabla.getColumnModel().getColumn(i).setCellRenderer(alinearCentro);
+                }
+                modelo.addRow(vector);
+            }
+            conexiones.cierraConexion();
+        } catch (SQLException e) {
+
+        } catch (Exception e) {
+
+        }
+    }
 
     /**
      * @param args the command line arguments
@@ -294,17 +272,10 @@ public class InfoRegistro extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JTextField articulo;
-    private javax.swing.JTextField cantidad;
-    private javax.swing.JButton consultar;
-    private javax.swing.JButton eliminar;
-    private javax.swing.JTextField id;
+    private javax.swing.JTextField buscador;
+    private javax.swing.JButton buscar;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JButton modificar;
     private javax.swing.JButton regresar;
     private javax.swing.JTable tabla;
     // End of variables declaration//GEN-END:variables

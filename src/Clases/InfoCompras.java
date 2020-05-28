@@ -5,18 +5,24 @@
  */
 package Clases;
 
+import conexiones.Conexion;
 import java.awt.Dimension;
-import java.sql.PreparedStatement;
+import java.sql.CallableStatement;
+import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Vector;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.JOptionPane;
+import javax.swing.SwingConstants;
+import javax.swing.table.DefaultTableCellRenderer;
 
 public class InfoCompras extends javax.swing.JFrame {
 
-    static ResultSet res;
-    int cont;
+    ResultSet res;
+    Connection conn;
+    Conexion conexiones = new Conexion();
 
     /**
      * Creates new form InfoCompras
@@ -25,23 +31,42 @@ public class InfoCompras extends javax.swing.JFrame {
         initComponents();
         setLocationRelativeTo(null);
         this.setMinimumSize(new Dimension(800, 600));
+        Cargar();
     }
 
     public void Cargar() {
-        DefaultTableModel modelo = (DefaultTableModel) tabla.getModel();
-        modelo.setRowCount(0);
-        //res = conexiones.conexion.Consulta("SELECT * FROM Compras");
+        DefaultTableCellRenderer alinearCentro = new DefaultTableCellRenderer();
+        alinearCentro.setHorizontalAlignment(SwingConstants.CENTER);
+        DefaultTableModel modelo = new DefaultTableModel();
+        modelo.addColumn("Id Compra");
+        modelo.addColumn("id Art");
+        modelo.addColumn("Artículo");
+        modelo.addColumn("Cant");
+        modelo.addColumn("Precio");
+        modelo.addColumn("Total");
+        modelo.addColumn("Fecha");
+        tabla.setModel(modelo);
         try {
+            conn = conexiones.Conexion();
+            Statement sql = conexiones.Conexion().createStatement();
+            ResultSet res = sql.executeQuery("SELECT * FROM InfoCompras");
             while (res.next()) {
-                Vector v = new Vector();
-                v.add(res.getInt(1));
-                v.add(res.getInt(2));
-                v.add(res.getInt(3));
-                modelo.addRow(v);
-                tabla.setModel(modelo);
+                Object vector[] = new Object[7];
+                for (int i = 0; i < vector.length; i++) {
+                    vector[i] = res.getObject(i + 1);
+                    tabla.getColumnModel().getColumn(i).setCellRenderer(alinearCentro);
+                }
+                modelo.addRow(vector);
             }
+            conexiones.cierraConexion();
         } catch (SQLException e) {
-
+            System.out.println("Error SQL: ");
+            e.printStackTrace(System.out);
+            conexiones.cierraConexion();
+        } catch (Exception e) {
+            System.out.println("Error Genérico: ");
+            e.printStackTrace(System.out);
+            conexiones.cierraConexion();
         }
     }
 
@@ -55,16 +80,9 @@ public class InfoCompras extends javax.swing.JFrame {
         jScrollPane1 = new javax.swing.JScrollPane();
         tabla = new javax.swing.JTable();
         menu = new javax.swing.JButton();
-        eliminar = new javax.swing.JButton();
-        modificar = new javax.swing.JButton();
-        consulta = new javax.swing.JButton();
-        jLabel1 = new javax.swing.JLabel();
-        jLabel2 = new javax.swing.JLabel();
-        jLabel4 = new javax.swing.JLabel();
-        id = new javax.swing.JTextField();
-        articulo = new javax.swing.JTextField();
-        cantidad = new javax.swing.JTextField();
         jLabel6 = new javax.swing.JLabel();
+        buscador = new javax.swing.JTextField();
+        buscar = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -109,136 +127,69 @@ public class InfoCompras extends javax.swing.JFrame {
             }
         });
 
-        eliminar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/recursos/iconfinder_Line_ui_icons_Svg-03_1465842.png"))); // NOI18N
-        eliminar.setText("Eliminar");
-        eliminar.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                eliminarActionPerformed(evt);
-            }
-        });
-
-        modificar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/recursos/iconfinder_pencil_285638.png"))); // NOI18N
-        modificar.setText("Modificar");
-        modificar.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                modificarActionPerformed(evt);
-            }
-        });
-
-        consulta.setIcon(new javax.swing.ImageIcon(getClass().getResource("/recursos/iconfinder_search_285651.png"))); // NOI18N
-        consulta.setText("Consultar");
-        consulta.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                consultaActionPerformed(evt);
-            }
-        });
-
-        jLabel1.setFont(new java.awt.Font("Tahoma", 0, 20)); // NOI18N
-        jLabel1.setText("ID");
-
-        jLabel2.setFont(new java.awt.Font("Tahoma", 0, 20)); // NOI18N
-        jLabel2.setText("Articulo:");
-
-        jLabel4.setFont(new java.awt.Font("Tahoma", 0, 20)); // NOI18N
-        jLabel4.setText("Cantidad:");
-
-        id.setEditable(false);
-
         jLabel6.setFont(new java.awt.Font("Tahoma", 0, 25)); // NOI18N
         jLabel6.setText("Registro de Compras");
+
+        buscador.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                buscadorFocusGained(evt);
+            }
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                buscadorFocusLost(evt);
+            }
+        });
+        buscador.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                buscadorKeyReleased(evt);
+            }
+        });
+
+        buscar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/recursos/iconfinder_search_285651.png"))); // NOI18N
+        buscar.setText("Buscar");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
+                .addGap(0, 0, Short.MAX_VALUE)
+                .addComponent(menu, javax.swing.GroupLayout.PREFERRED_SIZE, 141, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jScrollPane1)
                         .addContainerGap())
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(0, 361, Short.MAX_VALUE)
-                        .addComponent(jLabel1)
-                        .addGap(29, 29, 29)
-                        .addComponent(id, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(47, 47, 47)
-                        .addComponent(jLabel2)
-                        .addGap(32, 32, 32)
-                        .addComponent(articulo, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(37, 37, 37)
-                        .addComponent(jLabel4)
-                        .addGap(18, 18, 18)
-                        .addComponent(cantidad, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(233, 233, 233))))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jLabel6)
-                .addGap(410, 410, 410))
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(eliminar, javax.swing.GroupLayout.PREFERRED_SIZE, 124, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(41, 41, 41)
-                .addComponent(modificar, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(38, 38, 38)
-                .addComponent(consulta, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(menu, javax.swing.GroupLayout.PREFERRED_SIZE, 141, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addGap(0, 409, Short.MAX_VALUE)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                .addComponent(jLabel6)
+                                .addGap(410, 410, 410))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                .addComponent(buscador, javax.swing.GroupLayout.PREFERRED_SIZE, 204, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(36, 36, 36)
+                                .addComponent(buscar)
+                                .addGap(354, 354, 354))))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jLabel6)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel1)
-                    .addComponent(jLabel2)
-                    .addComponent(jLabel4)
-                    .addComponent(id, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(articulo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(cantidad, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(67, 67, 67)
+                .addGap(30, 30, 30)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(buscador, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(buscar))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 45, Short.MAX_VALUE)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 370, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(menu)
-                    .addComponent(eliminar)
-                    .addComponent(modificar)
-                    .addComponent(consulta))
-                .addGap(22, 22, 22))
+                .addComponent(menu)
+                .addGap(23, 23, 23))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
-    private void eliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_eliminarActionPerformed
-        int row = tabla.getSelectedRow();
-        int opc = JOptionPane.showConfirmDialog(this, "Ã‚Â¿ESTAS SEGURO QUE DESEA ELIMINAR ESTE REGISTRO?", "Pregunta", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
-        if (opc == JOptionPane.YES_OPTION) {
-            try {
-                //procedimiento.EliminarCompras(Integer.parseInt(tabla.getValueAt(row, 0).toString()));
-                Cargar();
-            } catch (SQLException e) {
-            }
-        }
-    }//GEN-LAST:event_eliminarActionPerformed
-
-    private void modificarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_modificarActionPerformed
-        try {
-//            PreparedStatement pps = conexiones.conexion.getConexion().prepareStatement("update Compras set idArticulo='"
-//                    + articulo.getText() + "', cantidad='" + cantidad.getText()
-//                    + "' where idCompras='" + id.getText() + "'");
-//            pps.executeUpdate();
-            JOptionPane.showMessageDialog(null, "LOS DATOS HAN SIDO MODIFICADOS");
-            id.setText("");
-            articulo.setText("");
-            cantidad.setText("");
-            articulo.requestFocus();
-            cantidad.requestFocus();
-            Cargar();
-        } catch (SQLException e) {
-        }
-    }//GEN-LAST:event_modificarActionPerformed
 
     private void menuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuActionPerformed
         COMPRAS co = new COMPRAS();
@@ -246,9 +197,54 @@ public class InfoCompras extends javax.swing.JFrame {
         dispose();
     }//GEN-LAST:event_menuActionPerformed
 
-    private void consultaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_consultaActionPerformed
-        Cargar();
-    }//GEN-LAST:event_consultaActionPerformed
+    private void buscadorKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_buscadorKeyReleased
+        if (buscador.getText().equals("")) {
+            Cargar();
+        } else {
+            buscando(buscador.getText());
+        }
+    }//GEN-LAST:event_buscadorKeyReleased
+
+    private void buscadorFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_buscadorFocusGained
+        buscador.setText("");
+    }//GEN-LAST:event_buscadorFocusGained
+
+    private void buscadorFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_buscadorFocusLost
+        buscador.setText("Búsqueda por fecha");
+    }//GEN-LAST:event_buscadorFocusLost
+
+    private void buscando(String busqueda) {
+        DefaultTableCellRenderer alinearCentro = new DefaultTableCellRenderer();
+        alinearCentro.setHorizontalAlignment(SwingConstants.CENTER);
+        DefaultTableModel modelo = new DefaultTableModel();
+        modelo.addColumn("Id Compra");
+        modelo.addColumn("id Art");
+        modelo.addColumn("Artículo");
+        modelo.addColumn("Cant");
+        modelo.addColumn("Precio");
+        modelo.addColumn("Total");
+        modelo.addColumn("Fecha");
+        tabla.setModel(modelo);
+        try {
+            conn = conexiones.Conexion();
+            CallableStatement proc = conn.prepareCall("{call VerInfoCompras(?)}");
+            proc.setString(1, busqueda);
+            res = proc.executeQuery();
+            while (res.next()) {
+                Object vector[] = new Object[7];
+                for (int i = 0; i < vector.length; i++) {
+                    vector[i] = res.getObject(i + 1);
+                    tabla.getColumnModel().getColumn(i).setCellRenderer(alinearCentro);
+                }
+                modelo.addRow(vector);
+            }
+            conexiones.cierraConexion();
+        } catch (SQLException e) {
+
+        } catch (Exception e) {
+
+        }
+    }
 
     /**
      * @param args the command line arguments
@@ -286,18 +282,11 @@ public class InfoCompras extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JTextField articulo;
-    private javax.swing.JTextField cantidad;
-    private javax.swing.JButton consulta;
-    private javax.swing.JButton eliminar;
-    private javax.swing.JTextField id;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel4;
+    private javax.swing.JTextField buscador;
+    private javax.swing.JButton buscar;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JButton menu;
-    private javax.swing.JButton modificar;
     private javax.swing.JTable tabla;
     // End of variables declaration//GEN-END:variables
 

@@ -32,10 +32,7 @@
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Group type="102" alignment="0" attributes="0">
                               <EmptySpace min="-2" pref="79" max="-2" attributes="0"/>
-                              <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                                  <Component id="hora" max="32767" attributes="0"/>
-                                  <Component id="fecha" max="32767" attributes="0"/>
-                              </Group>
+                              <Component id="hora" max="32767" attributes="0"/>
                               <EmptySpace min="99" max="32767" attributes="0"/>
                           </Group>
                           <Group type="102" alignment="1" attributes="0">
@@ -123,7 +120,6 @@
                               <Component id="horaEtq" min="-2" max="-2" attributes="0"/>
                           </Group>
                           <Group type="102" alignment="0" attributes="0">
-                              <Component id="fecha" min="-2" max="-2" attributes="0"/>
                               <EmptySpace min="-2" pref="12" max="-2" attributes="0"/>
                               <Component id="hor" min="-2" max="-2" attributes="0"/>
                           </Group>
@@ -179,8 +175,6 @@
         </Property>
         <Property name="text" type="java.lang.String" value="                          M&#xd3;DULO  COMPRAS"/>
       </Properties>
-    </Component>
-    <Component class="javax.swing.JLabel" name="fecha">
     </Component>
     <Component class="javax.swing.JLabel" name="hora">
     </Component>
