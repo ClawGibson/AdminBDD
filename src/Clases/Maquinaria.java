@@ -89,6 +89,7 @@ public class Maquinaria extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        menu = new javax.swing.JButton();
         etq = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
         tabla = new javax.swing.JTable();
@@ -108,6 +109,13 @@ public class Maquinaria extends javax.swing.JFrame {
         setExtendedState(10);
         setUndecorated(true);
         setResizable(false);
+
+        menu.setText("MENU");
+        menu.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuActionPerformed(evt);
+            }
+        });
 
         etq.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
         etq.setText("Maquinaria");
@@ -213,16 +221,14 @@ public class Maquinaria extends javax.swing.JFrame {
                                 .addComponent(etqNombre))
                             .addComponent(modificar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(cancelar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(10, 10, 10)
-                                .addComponent(nombre, javax.swing.GroupLayout.PREFERRED_SIZE, 122, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(18, 18, 18)
-                                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addGap(0, 0, Short.MAX_VALUE))
+                        .addGap(10, 10, 10)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jScrollPane1)
+                            .addComponent(nombre))
+                        .addGap(0, 8, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(215, 215, 215)
+                        .addComponent(menu)
+                        .addGap(154, 154, 154)
                         .addComponent(etq)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(minimizar, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -238,7 +244,8 @@ public class Maquinaria extends javax.swing.JFrame {
                     .addComponent(etq)
                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                         .addComponent(minimizar)
-                        .addComponent(cerrar)))
+                        .addComponent(cerrar))
+                    .addComponent(menu))
                 .addGap(61, 61, 61)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(nombre, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -273,7 +280,7 @@ public class Maquinaria extends javax.swing.JFrame {
                     JOptionPane.showMessageDialog(this, "Esta maquinaria ya existe", "Informacion", JOptionPane.INFORMATION_MESSAGE);
                 } else {
                     conn = conexiones.Conexion();
-                    CallableStatement proc = conn.prepareCall("{call NuevaMaquinaria(?,?)}");
+                    CallableStatement proc = conn.prepareCall("{call NuevaMaquinaria(?)}");
                     proc.setString(1, nombre.getText());
                     int filasAfectadas = proc.executeUpdate();
                     System.out.println("Filas afectadas: " + filasAfectadas);
@@ -373,6 +380,12 @@ public class Maquinaria extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_tablaMousePressed
 
+    private void menuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuActionPerformed
+        MenuPrincipal mp = new MenuPrincipal();
+        mp.setVisible(true);
+        dispose();
+    }//GEN-LAST:event_menuActionPerformed
+
     private void limpiar() {
         id.setText("");
         nombre.setText("");
@@ -437,13 +450,6 @@ public class Maquinaria extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton agregar;
-    private javax.swing.JButton agregar1;
-    private javax.swing.JButton agregar2;
-    private javax.swing.JButton agregar3;
-    private javax.swing.JButton agregar4;
-    private javax.swing.JButton agregar5;
-    private javax.swing.JButton agregar6;
     private javax.swing.JButton agregar8;
     private javax.swing.JButton cancelar;
     private javax.swing.JButton cerrar;
@@ -453,6 +459,7 @@ public class Maquinaria extends javax.swing.JFrame {
     private javax.swing.JLabel etqNombre;
     private javax.swing.JTextField id;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JButton menu;
     private javax.swing.JButton minimizar;
     private javax.swing.JButton modificar;
     private javax.swing.JTextField nombre;

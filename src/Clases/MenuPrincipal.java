@@ -56,8 +56,8 @@ public class MenuPrincipal extends javax.swing.JFrame {
 
         inventario.setBackground(new java.awt.Color(204, 255, 204));
         inventario.setFont(new java.awt.Font("Trebuchet MS", 1, 11)); // NOI18N
-        inventario.setIcon(new javax.swing.ImageIcon(getClass().getResource("/recursos/estante.png"))); // NOI18N
-        inventario.setText("INVENTARIO");
+        inventario.setIcon(new javax.swing.ImageIcon(getClass().getResource("/recursos/cajas.png"))); // NOI18N
+        inventario.setText("MAQUINARIA");
         inventario.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 inventarioActionPerformed(evt);
@@ -242,12 +242,6 @@ public class MenuPrincipal extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void inventarioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_inventarioActionPerformed
-        Inventarios inv = new Inventarios();
-        inv.setVisible(true);
-        dispose();
-    }//GEN-LAST:event_inventarioActionPerformed
-
     private void comprasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comprasActionPerformed
         COMPRAS cp = new COMPRAS();
         cp.setVisible(true);
@@ -305,6 +299,12 @@ public class MenuPrincipal extends javax.swing.JFrame {
     private void infoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_infoActionPerformed
 
     }//GEN-LAST:event_infoActionPerformed
+
+    private void inventarioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_inventarioActionPerformed
+        Maquinaria maq = new Maquinaria();
+        maq.setVisible(true);
+        dispose();
+    }//GEN-LAST:event_inventarioActionPerformed
 
     /**
      * @param args the command line arguments

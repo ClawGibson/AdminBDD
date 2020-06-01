@@ -42,7 +42,7 @@ public class Proveedores extends javax.swing.JFrame {
         this.setLocationRelativeTo(null);
 
         ((JPanel) getContentPane()).setOpaque(false);
-        ImageIcon uno = new ImageIcon(this.getClass().getResource("/recursos/12.jpg"));
+        ImageIcon uno = new ImageIcon(this.getClass().getResource("/recursos/23.jpg"));
         JLabel fondo = new JLabel();
         fondo.setIcon(uno);
         getLayeredPane().add(fondo, JLayeredPane.FRAME_CONTENT_LAYER);
@@ -509,7 +509,7 @@ public class Proveedores extends javax.swing.JFrame {
     }//GEN-LAST:event_agregarActionPerformed
 
     private void eliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_eliminarActionPerformed
-        int opc = JOptionPane.showConfirmDialog(this, "Ã‚Â¿ESTAS SEGURO QUE DESEA ELIMINAR ESTE REGISTRO?", "Pregunta", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+        int opc = JOptionPane.showConfirmDialog(this, "¿ESTAS SEGURO QUE DESEA ELIMINAR ESTE REGISTRO?", "Pregunta", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
         if (opc == JOptionPane.YES_OPTION) {
             try {
                 conn = conexiones.Conexion();

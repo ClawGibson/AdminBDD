@@ -5,14 +5,18 @@
  */
 package Clases;
 
+import com.sun.awt.AWTUtilities;
 import conexiones.Conexion;
 import java.awt.Dimension;
+import java.awt.Shape;
 import java.awt.event.KeyEvent;
+import java.awt.geom.RoundRectangle2D;
 import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import javax.swing.ImageIcon;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
 import javax.swing.JOptionPane;
@@ -34,16 +38,19 @@ public class Sesion extends javax.swing.JFrame {
     public Sesion() {
         initComponents();
         setLocationRelativeTo(null);
+        Shape forma = new RoundRectangle2D.Double(0, 0, this.getBounds().width, this.getBounds().height, 30, 30);
+        AWTUtilities.setWindowShape(this, forma);
         this.setMinimumSize(new Dimension(626, 412));
         setResizable(false);
 
         ((JPanel) getContentPane()).setOpaque(false);
-        ImageIcon uno = new ImageIcon(this.getClass().getResource("/recursos/5.jpg"));
+        ImageIcon uno = new ImageIcon(this.getClass().getResource("/recursos/2.jpg"));
         JLabel fondo = new JLabel();
         fondo.setIcon(uno);
         getLayeredPane().add(fondo, JLayeredPane.FRAME_CONTENT_LAYER);
         fondo.setBounds(0, 0, uno.getIconWidth(), uno.getIconHeight());
 
+        txtusuario.requestFocus();
     }
 
     /**
@@ -59,9 +66,11 @@ public class Sesion extends javax.swing.JFrame {
         BotonEntrar = new javax.swing.JButton();
         jLabel5 = new javax.swing.JLabel();
         txtusuario = new javax.swing.JTextField();
-        fondo = new javax.swing.JLabel();
+        cerrar = new javax.swing.JButton();
+        minimizar = new javax.swing.JButton();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
+        setUndecorated(true);
 
         txtPassword.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -95,20 +104,27 @@ public class Sesion extends javax.swing.JFrame {
             }
         });
 
-        fondo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/recursos/8.jpg"))); // NOI18N
-        fondo.setAlignmentY(0.0F);
-        fondo.setMaximumSize(null);
-        fondo.setMinimumSize(new java.awt.Dimension(626, 412));
-        fondo.setPreferredSize(new java.awt.Dimension(626, 412));
+        cerrar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/recursos/boton-de-borrar (1).png"))); // NOI18N
+        cerrar.setBorder(null);
+        cerrar.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                cerrarMousePressed(evt);
+            }
+        });
+
+        minimizar.setFont(new java.awt.Font("Tahoma", 0, 20)); // NOI18N
+        minimizar.setText("-");
+        minimizar.setBorder(null);
+        minimizar.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                minimizarMousePressed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(303, Short.MAX_VALUE)
-                .addComponent(jLabel5)
-                .addGap(195, 195, 195))
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
@@ -123,14 +139,27 @@ public class Sesion extends javax.swing.JFrame {
                     .addGroup(layout.createSequentialGroup()
                         .addGap(262, 262, 262)
                         .addComponent(BotonEntrar, javax.swing.GroupLayout.PREFERRED_SIZE, 89, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addComponent(fondo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(173, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(jLabel5)
+                        .addGap(195, 195, 195))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(minimizar, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(cerrar)
+                        .addContainerGap())))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(36, 36, 36)
+                .addContainerGap()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(minimizar)
+                    .addComponent(cerrar))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel5)
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -142,11 +171,7 @@ public class Sesion extends javax.swing.JFrame {
                     .addComponent(jLabel2))
                 .addGap(64, 64, 64)
                 .addComponent(BotonEntrar, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(35, Short.MAX_VALUE))
-            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(layout.createSequentialGroup()
-                    .addComponent(fondo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGap(0, 0, Short.MAX_VALUE)))
+                .addContainerGap(29, Short.MAX_VALUE))
         );
 
         pack();
@@ -176,6 +201,14 @@ public class Sesion extends javax.swing.JFrame {
             txtPassword.requestFocus();
         }
     }//GEN-LAST:event_txtusuarioKeyPressed
+
+    private void cerrarMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_cerrarMousePressed
+        System.exit(0);
+    }//GEN-LAST:event_cerrarMousePressed
+
+    private void minimizarMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_minimizarMousePressed
+        setExtendedState(JFrame.ICONIFIED);
+    }//GEN-LAST:event_minimizarMousePressed
 
     public void menuPrincipal() {
         encontrado = buscarUsuario(auxN);
@@ -208,7 +241,7 @@ public class Sesion extends javax.swing.JFrame {
                     return encontrado = true;
                 }
             } else {
-                
+
             }
         } catch (SQLException e) {
             System.out.println("Error SQL: ");
@@ -259,10 +292,11 @@ public class Sesion extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton BotonEntrar;
-    private javax.swing.JLabel fondo;
+    private javax.swing.JButton cerrar;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel5;
+    private javax.swing.JButton minimizar;
     private javax.swing.JPasswordField txtPassword;
     private javax.swing.JTextField txtusuario;
     // End of variables declaration//GEN-END:variables

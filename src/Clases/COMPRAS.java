@@ -48,7 +48,7 @@ public class COMPRAS extends javax.swing.JFrame {
         setSize(getWidth(), getHeight());
 
         ((JPanel) getContentPane()).setOpaque(false);
-        ImageIcon uno = new ImageIcon(this.getClass().getResource("/recursos/9.jpg"));
+        ImageIcon uno = new ImageIcon(this.getClass().getResource("/recursos/20.jpg"));
         JLabel fondo = new JLabel();
         fondo.setIcon(uno);
         getLayeredPane().add(fondo, JLayeredPane.FRAME_CONTENT_LAYER);
@@ -142,7 +142,7 @@ public class COMPRAS extends javax.swing.JFrame {
         marca = new javax.swing.JLabel();
         menu = new javax.swing.JButton();
         articuloEtq = new javax.swing.JLabel();
-        p = new javax.swing.JLabel();
+        cantEtq = new javax.swing.JLabel();
         cantidad = new javax.swing.JTextField();
         fech = new javax.swing.JLabel();
         hor = new javax.swing.JLabel();
@@ -318,8 +318,8 @@ public class COMPRAS extends javax.swing.JFrame {
         articuloEtq.setFont(new java.awt.Font("Tahoma", 0, 20)); // NOI18N
         articuloEtq.setText("Articulo");
 
-        p.setFont(new java.awt.Font("Tahoma", 0, 20)); // NOI18N
-        p.setText("Cantidad");
+        cantEtq.setFont(new java.awt.Font("Tahoma", 0, 20)); // NOI18N
+        cantEtq.setText("Cantidad");
 
         fech.setText("fecha");
 
@@ -408,7 +408,7 @@ public class COMPRAS extends javax.swing.JFrame {
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(articulo, javax.swing.GroupLayout.PREFERRED_SIZE, 113, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(10, 10, 10)
-                        .addComponent(p)
+                        .addComponent(cantEtq)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(cantidad, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(0, 477, Short.MAX_VALUE))
@@ -452,7 +452,7 @@ public class COMPRAS extends javax.swing.JFrame {
                         .addGap(3, 3, 3)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(articuloEtq)
-                            .addComponent(p)
+                            .addComponent(cantEtq)
                             .addComponent(cantidad, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(articulo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -740,6 +740,7 @@ public class COMPRAS extends javax.swing.JFrame {
     private javax.swing.JLabel articuloEtq;
     private javax.swing.JTextField buscador;
     private javax.swing.JButton buscar;
+    private javax.swing.JLabel cantEtq;
     private javax.swing.JTextField cantidad;
     private javax.swing.JLabel comprasEtq;
     private javax.swing.JButton eliminar;
@@ -759,7 +760,6 @@ public class COMPRAS extends javax.swing.JFrame {
     private javax.swing.JLabel marca;
     private javax.swing.JButton menu;
     private javax.swing.JButton nueva;
-    private javax.swing.JLabel p;
     private javax.swing.JButton registro;
     private javax.swing.JTextField sub;
     private javax.swing.JTable tabla;
