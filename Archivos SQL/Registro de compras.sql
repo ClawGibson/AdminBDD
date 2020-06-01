@@ -1,4 +1,4 @@
-CREATE PROC VerInfoCompras(
+ALTER PROC VerInfoCompras(
 		@Busqueda varchar(40)
 )AS
 BEGIN
@@ -14,11 +14,11 @@ BEGIN
 		Compras INNER JOIN ComprasArticulo ON Compras.idCompra = ComprasArticulo.idCompra
 		INNER JOIN Articulo ON ComprasArticulo.idArticulo = Articulo.idArticulo
 	WHERE
-		fecha LIKE '%'+@Busqueda+'%'
-	ORDER BY fecha DESC
+		fecha LIKE '%'+@Busqueda+'%' AND total IS NOT null
+	ORDER BY fecha DESC;
 END
 --------------------------------------------------------------------------------------------------------------------------------
-CREATE VIEW InfoCompras AS
+ALTER VIEW InfoCompras AS
 SELECT
 		Compras.idCompra,
 		ComprasArticulo.idArticulo,
@@ -30,3 +30,5 @@ SELECT
 	FROM
 		Compras INNER JOIN ComprasArticulo ON Compras.idCompra = ComprasArticulo.idCompra
 		INNER JOIN Articulo ON ComprasArticulo.idArticulo = Articulo.idArticulo
+	WHERE
+		total IS NOT null;

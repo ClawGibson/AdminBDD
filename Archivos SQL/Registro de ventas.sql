@@ -1,4 +1,4 @@
-CREATE VIEW InfoVentas AS
+ALTER VIEW InfoVentas AS
 SELECT
 		Ventas.idVenta,
 		VentasArticulo.idArticulo,
@@ -10,8 +10,10 @@ SELECT
 	FROM
 		Ventas INNER JOIN VentasArticulo ON Ventas.idVenta = VentasArticulo.idVenta
 		INNER JOIN Articulo ON VentasArticulo.idArticulo = Articulo.idArticulo
+	WHERE
+		total IS NOT null;
 --------------------------------------------------------------------------------------------------------------------------------
-CREATE PROC VerInfoVentas(
+ALTER PROC VerInfoVentas(
 	@Busqueda varchar(40)
 )AS
 BEGIN
@@ -27,6 +29,6 @@ BEGIN
 		Ventas INNER JOIN VentasArticulo ON Ventas.idVenta = VentasArticulo.idVenta
 		INNER JOIN Articulo ON VentasArticulo.idArticulo = Articulo.idArticulo
 	WHERE
-		fecha LIKE '%'+@Busqueda+'%'
+		fecha LIKE '%'+@Busqueda+'%' AND total IS NOT null;
 END
 --------------------------------------------------------------------------------------------------------------------------------

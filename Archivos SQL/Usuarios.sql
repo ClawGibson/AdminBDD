@@ -1,7 +1,7 @@
 ALTER PROC NuevoUsuario (
 	@NombreUsuario varchar(40),
 	@DireccionUsuario varchar(40),
-	@Telefono int,
+	@Telefono bigint,
 	@CiudadUsuario varchar(40)
 )
 AS

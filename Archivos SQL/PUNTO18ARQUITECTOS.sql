@@ -61,7 +61,7 @@ create table Usuarios
 	idUsuario int identity(1,1),
 	Nombre varchar(40)not null,	
 	direccion varchar(20),
-	telefono int,
+	telefono bigint,
 	idCiudad int ,
 	primary key(idUsuario),
 	foreign key (idCiudad) references Ciudades(idCiudad),
